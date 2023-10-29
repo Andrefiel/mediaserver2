@@ -1,3 +1,25 @@
+#!/bin/bash
+
+# Atualiza o Ubuntu
+sudo apt update
+sudo apt upgrade -y
+sudo apt autoremove -y
+
+# Cria a pasta docker na raiz
+sudo mkdir /docker
+
+# Instala o Docker e Docker-Compose
+sudo apt install docker.io docker-compose -y
+
+# Acessa a pasta docker
+cd /docker
+
+# Cria o arquivo docker-compose.yml
+sudo touch docker-compose.yml
+
+# Escreve a configuração do arquivo docker-compose.yml
+cat << EOF | sudo tee docker-compose.yml
+
 version: "3.9"
 services:
 ######MEDIA#####
@@ -6,13 +28,13 @@ services:
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Fortaleza
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
     volumes:
-      - /docker/appdata/jellyfin:/config
-      - /docker/media:/data
+      - ${DOCKER_APPDATA_PATH}jellyfin:/config
+      - ${DATA_PATH}:/data
     ports:
       - 8096:8096
       - 8920:8920 #optional
@@ -25,15 +47,14 @@ services:
     container_name: plex
     network_mode: host
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - VERSION=docker
       - PLEX_CLAIM= #optional
     volumes:
-      - /path/to/library:/config
-      - /path/to/tvseries:/tv
-      - /path/to/movies:/movies
+      - ${DOCKER_APPDATA_PATH}plex:/config
+      - ${DATA_PATH}:/data
     restart: unless-stopped
 #Xteve - IPTV distibutor
   xteve:
@@ -49,20 +70,20 @@ services:
     environment:
       TZ: ${TZ}
     volumes:
-      - ${USERDIR}/docker/xteve:/config:rw
+      - ${DOCKER_APPDATA_PATH}xteve:/config:rw
       - /dev/shm:/tmp/xteve
 #Tvheadend
   tvheadend:
     image: lscr.io/linuxserver/tvheadend:latest
     container_name: tvheadend
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - RUN_OPTS= #optional
     volumes:
-      - /path/to/data:/config
-      - /path/to/recordings:/recordings
+      - ${DOCKER_APPDATA_PATH}:/config
+      - ${DOCKER_APPDATA_PATH}recordings:/recordings
     ports:
       - 9981:9981
       - 9982:9982
@@ -75,13 +96,13 @@ services:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - /path/to/data:/config
-      - /path/to/tvseries:/tv #optional
-      - /path/to/downloadclient-downloads:/downloads #optional
+      - ${DOCKER_APPDATA_PATH}sonarr:/config
+      - ${DATA_PATH}:/tv #optional
+      - ${DATA_PATH}/downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -90,13 +111,13 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - /path/to/data:/config
-      - /path/to/movies:/movies #optional
-      - /path/to/downloadclient-downloads:/downloads #optional
+      - ${DOCKER_APPDATA_PATH}/radarr:/config
+      - ${DATA_PATH}:/movies #optional
+      - ${DATA_PATH}/downloads:/downloads #optional
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -105,15 +126,15 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Fortaleza
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - WEBUI_PORT=8080
     volumes:
-      - /docker/appdata/qbittorrent/config:/config
-      - /docker/media/downloads:/downloads
+      - ${DOCKER_APPDATA_PATH}qbittorrent/config:/config
+      - ${DATA_PATH}/downloads:/downloads
     ports:
-      - 8080:8080
+      - 8081:8080
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
@@ -122,11 +143,11 @@ services:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - <path to data>:/config
+      - ${DOCKER_APPDATA_PATH}tautulli:/config
     ports:
       - 8181:8181
     restart: unless-stopped    
@@ -135,12 +156,12 @@ services:
     image: lscr.io/linuxserver/ombi:latest
     container_name: ombi
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - BASE_URL=/ombi #optional
     volumes:
-      - /path/to/appdata/config:/config
+      - ${DOCKER_APPDATA_PATH}ombi:/config
     ports:
       - 3579:3579
     restart: unless-stopped
@@ -149,14 +170,14 @@ services:
     image: lscr.io/linuxserver/jackett:latest
     container_name: jackett
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - AUTO_UPDATE=true #optional
       - RUN_OPTS= #optional
     volumes:
-      - /path/to/data:/config
-      - /path/to/blackhole:/downloads
+      - ${DOCKER_APPDATA_PATH}jacket:/config
+      - ${DATA_PATH}/downloads:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -165,11 +186,11 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - /path/to/data:/config
+      - ${DATA_PATH}prowlarr:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -178,11 +199,11 @@ services:
     image: lscr.io/linuxserver/heimdall:latest
     container_name: heimdall
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - /path/to/appdata/config:/config
+      - ${DOCKER_APPDATA_PATH}heimdall:/config
     ports:
       - 8080:80
       - 8443:443
@@ -192,11 +213,11 @@ services:
     image: lscr.io/linuxserver/nginx:latest
     container_name: nginx
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - </path/to/appdata/config>:/config
+      - ${DOCKER_APPDATA_PATH}nginx:/config
     ports:
       - 80:80
       - 443:443
@@ -207,13 +228,13 @@ services:
     container_name: syncthing
     hostname: syncthing #optional
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
     volumes:
-      - /path/to/appdata/config:/config
-      - /path/to/data1:/data1
-      - /path/to/data2:/data2
+      - ${DOCKER_APPDATA_PATH}syncthing:/config
+      - ${DATA_PATH}/data1:/data1
+      - ${DATA_PATH}/data2:/data2
     ports:
       - 8384:8384
       - 22000:22000/tcp
@@ -228,9 +249,9 @@ services:
       - NET_ADMIN
       - SYS_MODULE #optional
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${DOCKER_TIME_ZONE}
       - SERVERURL=wireguard.domain.com #optional
       - SERVERPORT=51820 #optional
       - PEERS=1 #optional
@@ -240,10 +261,40 @@ services:
       - PERSISTENTKEEPALIVE_PEERS= #optional
       - LOG_CONFS=true #optional
     volumes:
-      - /path/to/appdata/config:/config
+      - ${DOCKER_APPDATA_PATH}wireguard:/config
       - /lib/modules:/lib/modules #optional
     ports:
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
+EOF    
+
+# Cria o arquivo .env
+sudo touch .env
+
+# Escreve a configuração do arquivo .env
+cat << EOF | sudo tee .env
+
+DOCKER_NETWORK_NAME = media
+DOCKER_CONTAINER_PREFIX = media-orcl
+DOCKER_TIME_ZONE = America/Fortaleza
+DOCKER_APPDATA_PATH = /docker/data/
+PUID = 1000
+PGID = 1000
+
+# Top-Level Location of Your Media and Incoming Data
+DATA_PATH = /docker/media
+
+# Plex
+PLEX_CLAIM = 
+PLEX_ADVERTISE_IP = http://localhost:32400/
+PLEX_TRANSCODE_PATH = /docker/media/data/plex/transcode
+
+# VPN
+VPN_USERNAME = p#######
+VPN_PASSWORD = ????????????????????
+VPN_LAN_SUBNET = 10.0.0.0/24
+EOF
+
+```
