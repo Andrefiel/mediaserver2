@@ -17,9 +17,14 @@ sudo apt install docker.io docker-compose -y
 cd /docker
 
 copiar arquivo
-url="https://github.com/Andrefiel/mediaserver2/blob/main/.env"
-response=$(curl -s $url)
-echo "$response" > /docker/.env
+if [ -f ~/.env ] then
+  env file_path=~/.env
+elif [ -f /mediaserver2/.env ]; then
+else
+  echo "Arquivo .env não encontrado"
+  exit 1
+fi
+sudo cp $env_file_path /docker/.env
 
 # Cria o arquivo docker-compose.yml
 sudo touch docker-compose.yml
