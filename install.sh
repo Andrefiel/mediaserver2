@@ -241,6 +241,38 @@ services:
       - 22000:22000/udp
       - 21027:21027/udp
     restart: unless-stopped
+#filebrowser    
+  filebrowser:
+    container_name: filebrowser
+    image: linuxserver/filebrowser:arm32v7-latest
+    ports:
+      - "8081:80"
+    volumes:
+      - ${DATA_PATH}:/srv
+      - ${DOCKER_APPDATA_PATH}filebrowser:/config
+    restart: always
+#netdata
+  netdata:
+    container_name: netdata
+    image: netdata/netdata:arm32v7-latest
+    ports:
+      - "19999:19999"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+#jdownloader   
+  jdownloader:
+    container_name: jdownloader
+    image: jlesage/jdownloader:armhf-1.0.2
+    ports:
+      - "5800:5800"
+      - "3129:3129"
+    volumes:
+      - ${DOCKER_APPDATA_PATH}jdownload:/config:rw
+      - ${DATA_PATH}/downloads:/output:rw
+    restart: always
 #wireguard
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
@@ -298,3 +330,6 @@ VPN_LAN_SUBNET = 10.0.0.0/24
 EOF
 
 ```
+# Inicia os containers
+sudo docker-compose up -d
+echo "Todas as etapas foram concluídas com sucesso!"
