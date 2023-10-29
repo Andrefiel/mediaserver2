@@ -51,7 +51,7 @@ services:
       - PGID=${PGID}
       - TZ=${DOCKER_TIME_ZONE}
       - VERSION=docker
-      - PLEX_CLAIM= #optional
+#      - PLEX_CLAIM= #optional
     volumes:
       - ${DOCKER_APPDATA_PATH}plex:/config
       - ${DATA_PATH}:/data
