@@ -14,11 +14,38 @@ sudo apt install docker.io docker-compose -y
 # Acessa a pasta docker
 cd /docker
 
+# Cria o arquivo .env
+sudo touch .env
+
+# Escreve a configuração do arquivo .env
+cat << EOF | sudo tee .env
+
+DOCKER_NETWORK_NAME = media
+DOCKER_CONTAINER_PREFIX = media-orcl
+DOCKER_TIME_ZONE = America/Fortaleza
+DOCKER_APPDATA_PATH = /docker/data/
+PUID = 1000
+PGID = 1000
+
+# Top-Level Location of Your Media and Incoming Data
+DATA_PATH = /docker/media
+
+# Plex
+PLEX_CLAIM = 
+PLEX_ADVERTISE_IP = http://localhost:32400/
+PLEX_TRANSCODE_PATH = /docker/media/data/plex/transcode
+
+# VPN
+VPN_USERNAME = p#######
+VPN_PASSWORD = ????????????????????
+VPN_LAN_SUBNET = 10.0.0.0/24
+EOF
+
 # Cria o arquivo docker-compose.yml
 sudo touch docker-compose.yml
 
 # Escreve a configuração do arquivo docker-compose.yml
-cat << EOF > sudo tee docker-compose.yml
+cat << EOF | sudo tee docker-compose.yml
 
 version: "3.9"
 services:
@@ -301,33 +328,6 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
 EOF    
-
-# Cria o arquivo .env
-sudo touch .env
-
-# Escreve a configuração do arquivo .env
-cat << EOF > sudo tee .env
-
-DOCKER_NETWORK_NAME = media
-DOCKER_CONTAINER_PREFIX = media-orcl
-DOCKER_TIME_ZONE = America/Fortaleza
-DOCKER_APPDATA_PATH = /docker/data/
-PUID = 1000
-PGID = 1000
-
-# Top-Level Location of Your Media and Incoming Data
-DATA_PATH = /docker/media
-
-# Plex
-PLEX_CLAIM = 
-PLEX_ADVERTISE_IP = http://localhost:32400/
-PLEX_TRANSCODE_PATH = /docker/media/data/plex/transcode
-
-# VPN
-VPN_USERNAME = p#######
-VPN_PASSWORD = ????????????????????
-VPN_LAN_SUBNET = 10.0.0.0/24
-EOF
 
 ```
 # Inicia os containers
