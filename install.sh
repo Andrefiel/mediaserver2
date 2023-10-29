@@ -18,7 +18,7 @@ cd /docker
 sudo touch docker-compose.yml
 
 # Escreve a configuração do arquivo docker-compose.yml
-cat << EOF | sudo tee docker-compose.yml
+cat << EOF > sudo tee docker-compose.yml
 
 version: "3.9"
 services:
@@ -306,7 +306,7 @@ EOF
 sudo touch .env
 
 # Escreve a configuração do arquivo .env
-cat << EOF | sudo tee .env
+cat << EOF > sudo tee .env
 
 DOCKER_NETWORK_NAME = media
 DOCKER_CONTAINER_PREFIX = media-orcl
