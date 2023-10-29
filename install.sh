@@ -6,7 +6,9 @@ sudo apt upgrade -y
 sudo apt autoremove -y
 
 # Cria a pasta docker na raiz
-sudo mkdir /docker
+if [ ! -d "/docker" ]; then
+  mkdir /docker
+fi
 
 # Instala o Docker e Docker-Compose
 sudo apt install docker.io docker-compose -y
@@ -14,32 +16,10 @@ sudo apt install docker.io docker-compose -y
 # Acessa a pasta docker
 cd /docker
 
-# Cria o arquivo .env
-sudo touch .env
-
-# Escreve a configuração do arquivo .env
-cat << EOF | sudo tee .env
-
-DOCKER_NETWORK_NAME = media
-DOCKER_CONTAINER_PREFIX = media-orcl
-DOCKER_TIME_ZONE = America/Fortaleza
-DOCKER_APPDATA_PATH = /docker/data/
-PUID = 1000
-PGID = 1000
-
-# Top-Level Location of Your Media and Incoming Data
-DATA_PATH = /docker/media
-
-# Plex
-PLEX_CLAIM = 
-PLEX_ADVERTISE_IP = http://localhost:32400/
-PLEX_TRANSCODE_PATH = /docker/media/data/plex/transcode
-
-# VPN
-VPN_USERNAME = p#######
-VPN_PASSWORD = ????????????????????
-VPN_LAN_SUBNET = 10.0.0.0/24
-EOF
+copiar arquivo
+url="https://github.com/Andrefiel/mediaserver2/blob/main/.env"
+response=$(curl -s $url)
+echo "$response" > /docker/.env
 
 # Cria o arquivo docker-compose.yml
 sudo touch docker-compose.yml
@@ -58,7 +38,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${DOCKER_TIME_ZONE}
-      - JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
+#      - JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
     volumes:
       - ${DOCKER_APPDATA_PATH}jellyfin:/config
       - ${DATA_PATH}:/data
@@ -177,7 +157,7 @@ services:
       - ${DOCKER_APPDATA_PATH}tautulli:/config
     ports:
       - 8181:8181
-    restart: unless-stopped    
+    restart: unless-stopped
 #Ombi
   ombi:
     image: lscr.io/linuxserver/ombi:latest
@@ -235,7 +215,7 @@ services:
       - 8080:80
       - 8443:443
     restart: unless-stopped
-#NGINX    
+#NGINX
   nginx:
     image: lscr.io/linuxserver/nginx:latest
     container_name: nginx
@@ -268,7 +248,7 @@ services:
       - 22000:22000/udp
       - 21027:21027/udp
     restart: unless-stopped
-#filebrowser    
+#filebrowser
   filebrowser:
     container_name: filebrowser
     image: linuxserver/filebrowser:arm32v7-latest
@@ -289,7 +269,7 @@ services:
       - /sys:/host/sys:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: always
-#jdownloader   
+#jdownloader
   jdownloader:
     container_name: jdownloader
     image: jlesage/jdownloader:armhf-1.0.2
@@ -329,7 +309,6 @@ services:
     restart: unless-stopped
 EOF    
 
-```
 # Inicia os containers
 sudo docker-compose up -d
 echo "Todas as etapas foram concluídas com sucesso!"
