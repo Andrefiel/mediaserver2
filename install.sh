@@ -315,17 +315,35 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
 #firefox  
-  firefox:
-    image: lscr.io/linuxserver/firefox:latest
-    container_name: firefox
+#  firefox:
+#    image: lscr.io/linuxserver/firefox:latest
+#    container_name: firefox
+#    security_opt:
+#      - seccomp:unconfined #optional
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - TZ=America/Fortaleza
+#    volumes:
+#      - /docker/appdata/firefox/config:/config
+#    ports:
+#      - 3000:3000
+#      - 3001:3001
+#    shm_size: "1gb"
+#    restart: unless-stopped
+#Opera
+  opera:
+    image: lscr.io/linuxserver/opera:latest
+    container_name: opera
     security_opt:
       - seccomp:unconfined #optional
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Fortaleza
+      - OPERA_CLI=https://www.linuxserver.io/ #optional
     volumes:
-      - /docker/appdata/firefox/config:/config
+      - /path/to/config:/config
     ports:
       - 3000:3000
       - 3001:3001
