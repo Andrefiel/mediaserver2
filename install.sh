@@ -42,13 +42,13 @@ services:
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
 #      - JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
     volumes:
-      - ${DOCKER_APPDATA_PATH}jellyfin:/config
-      - ${DATA_PATH}:/data
+      - /docker/appdata/jellyfin:/config
+      - /docker/media/:/data
     ports:
       - 8096:8096
       - 8920:8920 #optional
@@ -61,14 +61,14 @@ services:
     container_name: plex
     network_mode: host
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
       - VERSION=docker
 #      - PLEX_CLAIM= #optional
     volumes:
-      - ${DOCKER_APPDATA_PATH}plex:/config
-      - ${DATA_PATH}:/data
+      - /docker/appdata/plex:/config
+      - /docker/media/:/data
     restart: unless-stopped
 #Xteve - IPTV distibutor
   xteve:
@@ -84,20 +84,20 @@ services:
     environment:
       TZ: ${TZ}
     volumes:
-      - ${DOCKER_APPDATA_PATH}xteve:/config:rw
+      - /docker/appdata/xteve:/config:rw
       - /dev/shm:/tmp/xteve
 #Tvheadend
   tvheadend:
     image: lscr.io/linuxserver/tvheadend:latest
     container_name: tvheadend
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
       - RUN_OPTS= #optional
     volumes:
-      - ${DOCKER_APPDATA_PATH}:/config
-      - ${DOCKER_APPDATA_PATH}recordings:/recordings
+      - /docker/appdata/tvheadend:/config
+      - /docker/appdata/recordings:/recordings
     ports:
       - 9981:9981
       - 9982:9982
@@ -110,13 +110,13 @@ services:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DOCKER_APPDATA_PATH}sonarr:/config
-      - ${DATA_PATH}:/tv #optional
-      - ${DATA_PATH}/downloads:/downloads #optional
+      - /docker/appdata/sonarr:/config
+      - /docker/media/:/tv #optional
+      - /docker/media/downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -125,13 +125,13 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DOCKER_APPDATA_PATH}/radarr:/config
-      - ${DATA_PATH}:/movies #optional
-      - ${DATA_PATH}/downloads:/downloads #optional
+      - /docker/appdata//radarr:/config
+      - /docker/media/:/movies #optional
+      - /docker/media/downloads:/downloads #optional
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -140,13 +140,13 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
       - WEBUI_PORT=8080
     volumes:
-      - ${DOCKER_APPDATA_PATH}qbittorrent/config:/config
-      - ${DATA_PATH}/downloads:/downloads
+      - /docker/appdata/qbittorrent/config:/config
+      - /docker/media/downloads:/downloads
     ports:
       - 8081:8080
       - 6881:6881
@@ -157,11 +157,11 @@ services:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DOCKER_APPDATA_PATH}tautulli:/config
+      - /docker/appdata/tautulli:/config
     ports:
       - 8181:8181
     restart: unless-stopped
@@ -170,12 +170,12 @@ services:
     image: lscr.io/linuxserver/ombi:latest
     container_name: ombi
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
       - BASE_URL=/ombi #optional
     volumes:
-      - ${DOCKER_APPDATA_PATH}ombi:/config
+      - /docker/appdata/ombi:/config
     ports:
       - 3579:3579
     restart: unless-stopped
@@ -184,14 +184,14 @@ services:
     image: lscr.io/linuxserver/jackett:latest
     container_name: jackett
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
       - AUTO_UPDATE=true #optional
       - RUN_OPTS= #optional
     volumes:
-      - ${DOCKER_APPDATA_PATH}jacket:/config
-      - ${DATA_PATH}/downloads:/downloads
+      - /docker/appdata/jacket:/config
+      - /docker/media/downloads:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -200,11 +200,11 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DATA_PATH}prowlarr:/config
+      - /docker/media/prowlarr:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -213,11 +213,11 @@ services:
     image: lscr.io/linuxserver/heimdall:latest
     container_name: heimdall
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DOCKER_APPDATA_PATH}heimdall:/config
+      - /docker/appdata/heimdall:/config
     ports:
       - 8080:80
       - 8443:443
@@ -227,11 +227,11 @@ services:
     image: lscr.io/linuxserver/nginx:latest
     container_name: nginx
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DOCKER_APPDATA_PATH}nginx:/config
+      - /docker/appdata/nginx:/config
     ports:
       - 80:80
       - 443:443
@@ -242,13 +242,13 @@ services:
     container_name: syncthing
     hostname: syncthing #optional
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
     volumes:
-      - ${DOCKER_APPDATA_PATH}syncthing:/config
-      - ${DATA_PATH}/data1:/data1
-      - ${DATA_PATH}/data2:/data2
+      - /docker/appdata/syncthing:/config
+      - /docker/media/data1:/data1
+      - /docker/media/data2:/data2
     ports:
       - 8384:8384
       - 22000:22000/tcp
@@ -262,8 +262,8 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - ${DATA_PATH}:/srv
-      - ${DOCKER_APPDATA_PATH}filebrowser:/config
+      - /docker/media/:/srv
+      - /docker/appdata/filebrowser:/config
     restart: always
 #netdata
   netdata:
@@ -284,8 +284,8 @@ services:
       - "5800:5800"
       - "3129:3129"
     volumes:
-      - ${DOCKER_APPDATA_PATH}jdownload:/config:rw
-      - ${DATA_PATH}/downloads:/output:rw
+      - /docker/appdata/jdownload:/config:rw
+      - /docker/media//downloads:/output:rw
     restart: always
 #wireguard
   wireguard:
@@ -295,9 +295,9 @@ services:
       - NET_ADMIN
       - SYS_MODULE #optional
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${DOCKER_TIME_ZONE}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
       - SERVERURL=wireguard.domain.com #optional
       - SERVERPORT=51820 #optional
       - PEERS=1 #optional
@@ -307,12 +307,29 @@ services:
       - PERSISTENTKEEPALIVE_PEERS= #optional
       - LOG_CONFS=true #optional
     volumes:
-      - ${DOCKER_APPDATA_PATH}wireguard:/config
+      - /docker/appdata/wireguard:/config
       - /lib/modules:/lib/modules #optional
     ports:
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+#firefox  
+  firefox:
+    image: lscr.io/linuxserver/firefox:latest
+    container_name: firefox
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
+    volumes:
+      - /docker/appdata/firefox/config:/config
+    ports:
+      - 3000:3000
+      - 3001:3001
+    shm_size: "1gb"
     restart: unless-stopped
 EOF    
 
