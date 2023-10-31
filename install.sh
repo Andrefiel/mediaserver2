@@ -12,6 +12,7 @@ fi
 
 # Instala o Docker e Docker-Compose
 sudo apt install docker.io docker-compose -y
+sudo usermod -aG docker $USER
 
 # Acessa a pasta docker
 cd /docker
@@ -19,8 +20,8 @@ cd /docker
 copiar arquivo
 if [ -f ~/.env ]; then
   env_file_path=~/.env
-elif [ -f /mediaserver2/.env ]; then
-  env_file_path=/mediaserver2/.env
+elif [ -f /tmp/mediaserver2/.env ]; then
+  env_file_path=/tmp/mediaserver2/.env
 else
   echo "Arquivo .env não encontrado"
   exit 1
