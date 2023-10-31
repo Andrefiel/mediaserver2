@@ -352,5 +352,5 @@ services:
 EOF    
 
 # Inicia os containers
-sudo docker-compose up -d
+sudo docker compose -f ~/docker/docker-compose.yml up -d
 echo "Todas as etapas foram concluídas com sucesso!"
