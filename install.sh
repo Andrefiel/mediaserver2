@@ -280,7 +280,7 @@ services:
 #jdownloader
   jdownloader:
     container_name: jdownloader
-    image: jlesage/jdownloader:armhf-1.0.2
+    image: jlesage/jdownloader-2
     ports:
       - "5800:5800"
       - "3129:3129"
