@@ -149,7 +149,7 @@ services:
       - /docker/appdata/qbittorrent/config:/config
       - /docker/media/downloads:/downloads
     ports:
-      - 8081:8080
+      - 8082:8080
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
