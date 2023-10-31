@@ -259,7 +259,7 @@ services:
 #filebrowser
   filebrowser:
     container_name: filebrowser
-    image: linuxserver/filebrowser:arm32v7-latest
+    image: filebrowser/filebrowser
     ports:
       - "8081:80"
     volumes:
@@ -269,7 +269,7 @@ services:
 #netdata
   netdata:
     container_name: netdata
-    image: netdata/netdata:arm32v7-latest
+    image: netdata/netdata
     ports:
       - "19999:19999"
     volumes:
