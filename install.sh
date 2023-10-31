@@ -104,7 +104,7 @@ services:
       - 9982:9982
     devices:
       - /dev/dri:/dev/dri #optional
-      - /dev/dvb:/dev/dvb #optional
+#      - /dev/dvb:/dev/dvb #optional
     restart: unless-stopped
 #Sonarr
   sonarr:
