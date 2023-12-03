@@ -350,6 +350,25 @@ services:
       - 3001:3001
     shm_size: "1gb"
     restart: unless-stopped
+#Navidrome    
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navi
+    restart: unless-stopped
+    ports:
+      - "8200:4533"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Fortaleza
+      - ND_SCANINTERVAL=1m
+      - ND_LOGLEVEL=info
+      - ND_PORT=4533
+      - ND_TRANSCODINGCACHESIZE=100MB
+      - ND_SESSIONTIMEOUT=24h
+    volumes:
+      - /docker/appdata/navidrome:/data
+      - /docker/media/:/music:ro    
 EOF    
 
 # Inicia os containers
