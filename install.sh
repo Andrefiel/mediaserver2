@@ -237,6 +237,11 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - /docker/appdata/certbot/conf:/etc/letsencrypt
+      - /docker/appdata/certbot/www:/var/www/certbot
 #Syncthing
   syncthing:
     image: lscr.io/linuxserver/syncthing:latest
