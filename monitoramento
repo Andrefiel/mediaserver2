@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Configuração do Prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+    depends_on:
+      - snmp-exporter
+
+  snmp-exporter:
+    image: prom/snmp-exporter:latest
+    ports:
+      - "9116:9116"
+    volumes:
+      - ./snmp.yml:/etc/snmp_exporter/snmp.yml  # Configuração do SNMP Exporter
+    restart: always
+
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:alpine-latest
+    environment:
+      - DB_SERVER_HOST=zabbix-db
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix_pass
+      - MYSQL_ROOT_PASSWORD=root_pass
+    depends_on:
+      - zabbix-db
+    volumes:
+      - zabbix_server_data:/var/lib/zabbix
+    ports:
+      - "10051:10051"
+    restart: always
+
+  zabbix-db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix_pass
+      - MYSQL_ROOT_PASSWORD=root_pass
+    volumes:
+      - zabbix_db_data:/var/lib/mysql
+    restart: always
+
+  glpi:
+    image: diouxx/glpi
+    environment:
+      - GLPI_DB_HOST=glpi-db
+      - GLPI_DB_USER=glpi
+      - GLPI_DB_PASSWORD=glpi_pass
+      - GLPI_DB_NAME=glpi
+    depends_on:
+      - glpi-db
+    volumes:
+      - glpi_data:/var/www/html/glpi
+    ports:
+      - "8080:80"
+    restart: always
+
+  glpi-db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=glpi
+      - MYSQL_USER=glpi
+      - MYSQL_PASSWORD=glpi_pass
+      - MYSQL_ROOT_PASSWORD=root_pass
+    volumes:
+      - glpi_db_data:/var/lib/mysql
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    restart: always
+
+  netbox:
+    image: netboxcommunity/netbox:latest
+    environment:
+      - SUPERUSER_NAME=admin
+      - SUPERUSER_EMAIL=admin@example.com
+      - SUPERUSER_PASSWORD=admin_pass
+    volumes:
+      - netbox_data:/opt/netbox/netbox/media
+    ports:
+      - "8000:8080"
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_data:/var/log/nginx
+      - certbot_certs:/etc/letsencrypt
+    restart: always
+    depends_on:
+      - certbot
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - certbot_certs:/etc/letsencrypt
+      - certbot_var:/var/lib/letsencrypt
+      - ./letsencrypt:/etc/letsencrypt
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/lib/letsencrypt; sleep 12h; done"
+
+volumes:
+  prometheus_data:
+  zabbix_server_data:
+  zabbix_db_data:
+  glpi_data:
+  glpi_db_data:
+  grafana_data:
+  netbox_data:
+  nginx_data:
+  certbot_certs:
+  certbot_var:
